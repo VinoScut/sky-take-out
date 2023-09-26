@@ -2,6 +2,7 @@ package com.sky.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
@@ -14,13 +15,18 @@ import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> implements EmployeeService {
@@ -28,9 +34,9 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     @Autowired
     private EmployeeMapper employeeMapper;
 
-    private LambdaUpdateWrapper<Employee> employeeLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+    private LambdaUpdateWrapper<Employee> employeeLambdaUpdateWrapper;
 
-    private LambdaQueryWrapper<Employee> employeeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    private LambdaQueryWrapper<Employee> employeeLambdaQueryWrapper;
 
     @Override
     public void save(EmployeeDTO employeeDTO) {
@@ -93,6 +99,20 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         return employee;
     }
 
+    @Override
+    public PageResult<Employee> page(String name, Integer page, Integer pageSize) {
+        Page<Employee> employeePage = new Page<>(page, pageSize);
+        //注意：在 mp 中，每进行一次查询，就要创建一个“全新的” wrapper，不能重复使用，否则 wrapper 中包含的是”上一次“查询的条件
+        employeeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        employeeLambdaQueryWrapper.like(StringUtils.hasText(name), Employee::getName, name);
+        Page<Employee> resPage = employeeMapper.selectPage(employeePage, employeeLambdaQueryWrapper);
+        Long total = resPage.getTotal();
+        List<Employee> records = resPage.getRecords();
+        PageResult<Employee> employeePageResult = new PageResult<>();
+        employeePageResult.setRecords(records);
+        employeePageResult.setTotal(total);
+        return employeePageResult;
+    }
 
 
 }
