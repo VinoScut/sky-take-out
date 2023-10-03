@@ -24,5 +24,7 @@ public class MessageConstant {
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
     public static final String USER_ALREADY_EXITS = "用户已存在";
+    public static final String WRONG_ID = "非法的用户Id";
+    public static final String AINT_ADMIN = "抱歉，您不具备管理员权限，无法进行此操作！";
 
 }

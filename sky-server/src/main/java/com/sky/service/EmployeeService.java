@@ -22,4 +22,8 @@ public interface EmployeeService {
     PageResult<Employee> page(String name, Integer page, Integer pageSize);
 
     void changeEmployeeStatus(Long id, Integer status);
+
+    Employee getEmployeeById(Integer id);
+
+    void editEmployee(EmployeeDTO employeeDTO);
 }

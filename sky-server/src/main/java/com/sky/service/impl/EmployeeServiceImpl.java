@@ -14,6 +14,7 @@ import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
+import com.sky.exception.WrongIdException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
@@ -122,6 +123,30 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
                                     .status(status)
                                     .build();
         //调用通用的 updateEmployee 方法，修改指定员工的 status
+        employeeMapper.updateEmployee(employee);
+    }
+
+    @Override
+    public Employee getEmployeeById(Integer id) {
+        employeeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if(id != null && id >= 0) {
+            return employeeMapper.selectById(id);
+        }
+        throw new WrongIdException("非法的用户Id");
+    }
+
+    @Override
+    public void editEmployee(EmployeeDTO employeeDTO) {
+        //修改时间
+        LocalDateTime updateTime = LocalDateTime.now();
+        //修改人 id
+        Long updateUser = BaseContext.getCurrentId();
+        Employee employee = new Employee();
+        //使用 BeanUtils.copyProperties()，将传入的 employeeDTO 中的属性拷贝至 employee 中
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateUser(updateUser);
+        employee.setUpdateTime(updateTime);
+        //将封装好的 employee 传给 DAO 层，调用其 “通用的” update方法，完成编辑操作
         employeeMapper.updateEmployee(employee);
     }
 

@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
@@ -111,9 +112,37 @@ public class EmployeeController {
         Long currentId = BaseContext.getCurrentId();
         //校验当前用户是否是管理员，如果不是，不允许执行此操作
         if(currentId != 1) {
-            return Result.error("您不具备管理员权限！无法进行此操作！");
+            return Result.error(MessageConstant.AINT_ADMIN);
         }
         employeeService.changeEmployeeStatus(id, status);
         return Result.success("操作成功");
+    }
+
+    /**
+     * 根据 id 查询对应的员工信息
+     * @param id 员工 id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询员工信息")
+    public Result<Employee> getEmployeeById(@PathVariable("id") Integer id){
+        Employee employee = employeeService.getEmployeeById(id);
+        //查询到的 employee 对象中包含密码，虽然密码已经是经过“加密”的，但仍然可以在后端处理一下，不让密码相关的内容暴露在前端页面
+        employee.setPassword("******");
+        return Result.success(employee);
+    }
+
+    /**
+     * 编辑员工的信息
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("编辑员工信息")
+    public Result editEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        if(BaseContext.getCurrentId() != 1) {
+            return Result.error(MessageConstant.AINT_ADMIN);
+        }
+        employeeService.editEmployee(employeeDTO);
+        return Result.success();
     }
 }
