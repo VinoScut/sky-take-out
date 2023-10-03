@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -15,7 +16,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -96,5 +96,24 @@ public class EmployeeController {
         log.info("员工分页查询，参数为：{}", employeePageQueryDTO);
         PageResult<Employee> pageResult = employeeService.page(employeePageQueryDTO.getName(), employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
         return Result.success(pageResult);
+    }
+
+    /**
+     * 启用、禁用员工账号
+     * @param id 员工id
+     * @param status 修改后的状态
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用/禁用员工账号")
+    public Result enableOrDisableEmployee(@RequestParam Long id, @PathVariable("status") Integer status) {
+        log.info("启用禁用员工账号：{}, {}", id, status);
+        Long currentId = BaseContext.getCurrentId();
+        //校验当前用户是否是管理员，如果不是，不允许执行此操作
+        if(currentId != 1) {
+            return Result.error("您不具备管理员权限！无法进行此操作！");
+        }
+        employeeService.changeEmployeeStatus(id, status);
+        return Result.success("操作成功");
     }
 }

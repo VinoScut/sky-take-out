@@ -20,4 +20,6 @@ public interface EmployeeService {
     Employee login(EmployeeLoginDTO employeeLoginDTO);
 
     PageResult<Employee> page(String name, Integer page, Integer pageSize);
+
+    void changeEmployeeStatus(Long id, Integer status);
 }

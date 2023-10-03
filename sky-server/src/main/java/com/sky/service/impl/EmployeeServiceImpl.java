@@ -114,5 +114,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         return employeePageResult;
     }
 
+    @Override
+    public void changeEmployeeStatus(Long id, Integer status) {
+        //根据传入的 id 和 status，使用 builder 构造出 Employee 对象，将此对象传给 DAO层
+        Employee employee = Employee.builder()
+                                    .id(id)
+                                    .status(status)
+                                    .build();
+        //调用通用的 updateEmployee 方法，修改指定员工的 status
+        employeeMapper.updateEmployee(employee);
+    }
+
 
 }
