@@ -128,11 +128,10 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
     @Override
     public Employee getEmployeeById(Integer id) {
-        employeeLambdaQueryWrapper = new LambdaQueryWrapper<>();
         if(id != null && id >= 0) {
             return employeeMapper.selectById(id);
         }
-        throw new WrongIdException("非法的用户Id");
+        throw new WrongIdException(MessageConstant.WRONG_ID);
     }
 
     @Override
