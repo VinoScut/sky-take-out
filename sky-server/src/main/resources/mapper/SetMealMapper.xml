@@ -15,4 +15,5 @@
         from setmeal
         where category_id = #{categoryId};
     </select>
+
 </mapper>

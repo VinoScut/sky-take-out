@@ -47,18 +47,18 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         BeanUtils.copyProperties(employeeDTO, employee);
         //除此之外，还需要设置 Employee 的其他属性，因为存入数据库时，要对所有字段进行赋值
         //(1)创建时间和修改时间，创建视为“第一次修改操作”，因此二者都取当下的时间
-        LocalDateTime now = LocalDateTime.now();
-        employee.setCreateTime(now);
-        employee.setUpdateTime(now);
+//        LocalDateTime now = LocalDateTime.now();
+//        employee.setCreateTime(now);
+//        employee.setUpdateTime(now);
         //(2)密码取默认值123456，注意：用 “常量” 代替字符串，先使用 “md5加密” 后再存入数据库
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         //(3)员工状态：默认是启用的，同样用 “常量” 代替写死的字符串，起到 “见名知意” 的效果
         employee.setStatus(StatusConstant.ENABLE);
         //(4)新增者和修改者的 id：调用 BaseContext，从当前线程的 ThreadLocalMap 中取出存储的 empId
         //由于程序一启动并且调用 BaseContext 后，其中的 ThreadLocal 就会被创建并且保持不变，所以每个线程都能取到自己的 empId
-        Long empId = BaseContext.getCurrentId();
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
+//        Long empId = BaseContext.getCurrentId();
+//        employee.setCreateUser(empId);
+//        employee.setUpdateUser(empId);
         //使用 employeeMapper 传入封装好的 Employee 完成新增操作
         employeeMapper.insert(employee);
     }
@@ -136,15 +136,15 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
     @Override
     public void editEmployee(EmployeeDTO employeeDTO) {
-        //修改时间
-        LocalDateTime updateTime = LocalDateTime.now();
-        //修改人 id
-        Long updateUser = BaseContext.getCurrentId();
+//        //修改时间
+//        LocalDateTime updateTime = LocalDateTime.now();
+//        //修改人 id
+//        Long updateUser = BaseContext.getCurrentId();
         Employee employee = new Employee();
         //使用 BeanUtils.copyProperties()，将传入的 employeeDTO 中的属性拷贝至 employee 中
         BeanUtils.copyProperties(employeeDTO, employee);
-        employee.setUpdateUser(updateUser);
-        employee.setUpdateTime(updateTime);
+//        employee.setUpdateUser(updateUser);
+//        employee.setUpdateTime(updateTime);
         //将封装好的 employee 传给 DAO 层，调用其 “通用的” update方法，完成编辑操作
         employeeMapper.updateEmployee(employee);
     }
