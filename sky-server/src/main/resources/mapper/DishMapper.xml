@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sky.mapper.DishMapper">
+
+    <resultMap id="selectByIdResultMap" type="com.sky.vo.DishVO">
+        <id property="id" column="id"/>
+        <collection property="flavors"
+                    select="com.sky.mapper.DishFlavorMapper.selectByDishId"
+                    column="id"/>
+    </resultMap>
+
+    <!-- DishVO selectById(Integer id); -->
+    <select id="selectById" resultMap="selectByIdResultMap">
+        select id, name, category_id, price, image, description, status, update_time
+        from dish
+        where id = #{id};
+    </select>
+
+    <!-- Page<DishVO> selectPage(Page<DishVO> dishVOPage, DishPageQueryDTO dishPageQueryDTO); -->
+    <select id="selectPage" resultType="com.sky.vo.DishVO">
+        select d.id, d.name, d.category_id, d.price, d.image, d.description, d.status, d.update_time, c.name category_name
+        from dish d left join category c
+        on d.category_id = c.id
+        <where>
+            <if test="dishPageQueryDTO.name != null">d.name like concat('%', #{dishPageQueryDTO.name}, '%')</if>
+            <if test="dishPageQueryDTO.categoryId != null">and d.category_id = #{dishPageQueryDTO.categoryId}</if>
+            <if test="dishPageQueryDTO.status != null">and d.status = #{dishPageQueryDTO.status}</if>
+        </where>
+    </select>
+
+</mapper>
