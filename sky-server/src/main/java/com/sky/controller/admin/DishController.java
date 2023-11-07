@@ -1,5 +1,7 @@
 package com.sky.controller.admin;
 
+import com.sky.constant.MessageConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
@@ -8,10 +10,15 @@ import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Api(tags = "菜品相关接口")
+@Slf4j
 @RestController
 @RequestMapping("/admin/dish")
 public class DishController {
@@ -53,4 +60,52 @@ public class DishController {
 
         return Result.success();
     }
+
+    /**
+     * 新增菜品
+     * @param dishDTO
+     * @return
+     */
+    @ApiOperation("新增菜品")
+    @PostMapping
+    public Result add(@RequestBody DishDTO dishDTO) {
+        dishService.add(dishDTO);
+        return Result.success();
+    }
+
+    /**
+     * 删除菜品
+     * @param ids
+     * @return
+     */
+    @ApiOperation("删除菜品")
+    @DeleteMapping
+    public Result delete(String ids) {
+        if(BaseContext.getCurrentId() != 1) {
+            return Result.error(MessageConstant.AINT_ADMIN);
+        }
+        //拿到实际删除的菜品数量，分类讨论，决定返回给前端的提示信息
+        int deleteNum = dishService.delete(ids);
+        if(deleteNum == 0) {
+            return Result.error("所选菜品全部为启售状态或关联在套餐中，删除失败");
+        }
+        if(deleteNum < ids.split(",").length) {
+            return Result.error("仅删除了所选的部分菜品，其余菜品为启售状态或关联在套餐中，无法删除");
+        }
+        return Result.success("所选菜品已全部删除");
+    }
+
+    /**
+     * 起售、停售菜品
+     * @param id
+     * @param status
+     * @return
+     */
+    @ApiOperation("起售、停售菜品")
+    @PostMapping("/status/{status}")
+    public Result enableOrDisable(Long id, @PathVariable Integer status) {
+        dishService.enableOrDisable(id, status);
+        return Result.success();
+    }
+
 }

@@ -6,3 +6,6 @@ sky:
     database: sky_take_out
     username: root
     password: abc123
+  alioss:
+    endpoint: oss-cn-guangzhou.aliyuncs.com
+    bucket-name: web-vino

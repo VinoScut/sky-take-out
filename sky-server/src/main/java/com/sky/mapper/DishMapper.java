@@ -19,4 +19,8 @@ public interface DishMapper extends BaseMapper<Dish> {
     Page<DishVO> selectPage(Page<DishVO> dishVOPage, DishPageQueryDTO dishPageQueryDTO);
 
     DishVO selectById(Integer id);
+
+    @Select("select status from dish where id = #{id}")
+    Integer checkStatus(Long id);
+
 }
