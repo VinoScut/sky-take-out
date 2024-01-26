@@ -57,7 +57,7 @@ public class DishController {
     @ApiOperation("修改菜品")
     @PutMapping
     public Result edit(@RequestBody DishDTO dishDTO) {
-
+        dishService.edit(dishDTO);
         return Result.success();
     }
 

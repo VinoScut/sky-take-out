@@ -44,7 +44,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
         //2、校验令牌
         try {
-            log.info("jwt校验:{}", token);
+            log.info("管理端jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
             //调用 BaseContext 工具类，以其中创建的静态 ThreadLocal 为 key，向当前线程的 ThreadLocalMap 中存入 empId
@@ -59,3 +59,16 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

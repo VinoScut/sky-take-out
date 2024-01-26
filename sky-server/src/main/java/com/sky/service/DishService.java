@@ -18,4 +18,6 @@ public interface DishService {
     int delete(String ids);
 
     void enableOrDisable(Long id, Integer status);
+
+    void edit(DishDTO dishDTO);
 }

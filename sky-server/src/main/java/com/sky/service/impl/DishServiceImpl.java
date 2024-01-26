@@ -1,6 +1,5 @@
 package com.sky.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
@@ -19,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,5 +96,65 @@ public class DishServiceImpl implements DishService {
         dish.setId(id);
         dish.setStatus(status);
         dishMapper.updateById(dish);
+    }
+
+    @Override
+    @Transactional
+    public void edit(DishDTO dishDTO) {
+        //将 dishDTO 中除了 flavors 之外的属性全部拷贝到 dish 对象中，然后执行修改操作
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        dishMapper.updateById(dish);
+        Long dishId = dishDTO.getId();
+        //拿到当前菜品的新口味数据，并为每个新口味的 dishId 属性赋值，为可能的添加操作做准备，因为前端传过来的口味数据是没有 dishId 的
+        List<DishFlavor> newFlavors = dishDTO.getFlavors();
+        newFlavors.forEach(newFlavor -> newFlavor.setDishId(dishId));
+        //从数据库中查出旧的口味数据，并为每个旧口味的 dishId 进行赋值，后面删除旧口味数据时会用到
+        Map<String, DishFlavor> oldFlavors = dishFlavorMapper.getDishFlavorByDishId(dishId);
+        oldFlavors.values().forEach(oldFlavor -> oldFlavor.setDishId(dishId));
+        //遍历新口味数据
+        for(DishFlavor newFlavor : newFlavors) {
+            String newFlavorName = newFlavor.getName();
+            String newFlavorValue = newFlavor.getValue();
+            //如果在旧口味中 “没有” 这个新口味，那么将这个新口味添加到 dish_flavor 这张表中
+            if(!oldFlavors.containsKey(newFlavorName)) {
+                dishFlavorMapper.insert(newFlavor);
+                continue;
+            }
+            //如果当前这个口味已经存在，判断是否发生了改变，如果发生了，那么执行修改操作
+            if(!newFlavorValue.equals(oldFlavors.get(newFlavorName).getValue())) {
+                dishFlavorMapper.updateByDishIdAndName(newFlavor);
+            }
+            //无论是否发生改变，都需要在旧口味中将当前口味删除掉
+            oldFlavors.remove(newFlavorName);
+        }
+        //此时旧口味数据中剩下的口味，在新口味中不存在，说明这些口味是需要被删除的
+        oldFlavors.values().forEach(dishFlavorMapper::deleteByDishIdAndName);
+
+
+//        //从数据库中将当前菜品的旧口味数据查出来
+//        Map<String, String> oldFlavors = dishFlavorMapper.getNameAndValueByDishId(dishId);
+//        //遍历新口味数据
+//        for(DishFlavor newFlavor : dishDTO.getFlavors()) {
+//            String name = newFlavor.getName();
+//            String value = newFlavor.getValue();
+//            if(!oldFlavors.containsKey(name)) {
+//                //如果旧口味中不存在当前口味，执行“新增”操作
+//                dishFlavorMapper.insert(newFlavor);
+//                continue;
+//            }
+//            //如果当前遍历到的口味也在旧口味中存在并且有修改过，那么执行“修改”操作，然后将旧口味中的对应的口味数据剔除掉
+//            if(!value.equals(oldFlavors.get(name))) {
+//                dishFlavorMapper.update(newFlavor);
+//                oldFlavors.remove(name);
+//            }
+//        }
+//        //如果旧口味的 map 中仍然有数据，说明这些口味在当前菜品的修改操作中被删除，将这些口味从 dish_flavor 表中删除
+//        for(String name: oldFlavors.keySet()) {
+//            DishFlavor dishFlavorToDelete = new DishFlavor();
+//            dishFlavorToDelete.setDishId(dishId);
+//            dishFlavorToDelete.setName(name);
+//            dishFlavorMapper.deleteByDishIdAndName(dishFlavorToDelete);
+//        }
     }
 }

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Component //将切面类交给 Spring 进行管理
 public class AutoFillAspect {
 
-    @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill))")
+    @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill)")
     public void autoFillPointCut() {
     }
 

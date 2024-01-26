@@ -22,6 +22,7 @@ public class DishFlavor implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Long id;
+
     //菜品id
     private Long dishId;
 

@@ -12,6 +12,11 @@ spring:
       url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: ${sky.datasource.username}
       password: ${sky.datasource.password}
+  redis:
+    host: ${sky.redis.host}
+    port: ${sky.redis.port}
+    password: ${sky.redis.password}
+    database: ${sky.redis.database}
 
 #mybatis:
 #  #mapper配置文件
@@ -37,12 +42,21 @@ logging:
 
 sky:
   jwt:
-    # 设置jwt签名加密时使用的秘钥
+    # 设置服务端jwt签名加密时使用的秘钥
     admin-secret-key: itcast
-    # 设置jwt过期时间
+    # 设置服务端jwt过期时间
     admin-ttl: 7200000
-    # 设置前端传递过来的令牌名称
+    # 服务器端令牌名称
     admin-token-name: token
+    # 用户端jwt签名加密的密钥
+    user-secret-key: vino
+    # 用户端jwt过期时间
+    user-ttl: 7200000
+    # 用户端令牌名称
+    user-token-name: authentication
   alioss:
     endpoint: ${sky.alioss.endpoint}
     bucket-name: ${sky.alioss.bucket-name}
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}

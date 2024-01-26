@@ -9,3 +9,11 @@ sky:
   alioss:
     endpoint: oss-cn-guangzhou.aliyuncs.com
     bucket-name: web-vino
+  redis:
+    host: 47.115.209.60
+    port: 6379
+    password: abc123
+    database: 1 # 0号数据库用于日常的 Redis 学习，1号数据库才是当前项目的数据库
+  wechat:
+    appid: wx7a65d917ab8e0674
+    secret: 287f6e70b801b8577e9b7d831b2fec66

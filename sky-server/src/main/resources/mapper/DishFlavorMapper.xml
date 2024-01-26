@@ -21,4 +21,38 @@
         </foreach>
     </delete>
 
+    <!-- Map<String, String> getDishFlavorByDishId(Long dishId); -->
+    <select id="getDishFlavorByDishId" resultType="DishFlavor">
+        select name, value
+        from dish_flavor
+        where dish_id = #{dishId};
+    </select>
+
+    <!-- void update(DishFlavor dishFlavor); -->
+    <update id="update">
+        update dish_flavor
+        set value = #{value}
+        where dish_id = #{dishId} and name = #{name};
+    </update>
+
+    <!-- void deleteByDishIdAndName(DishFlavor dishFlavor); -->
+    <delete id="deleteByDishIdAndName">
+        delete from dish_flavor
+        where dish_id = #{dishId} and name = #{name};
+    </delete>
+
+    <!-- void updateByDishIdAndName(DishFlavor dishFlavor); -->
+    <update id="updateByDishIdAndName">
+        update dish_flavor
+        set value = #{value}
+        where dish_id = #{dishId} and name = #{name};
+    </update>
+
+<!--    &lt;!&ndash; List<DishFlavor> getDishFlavorByDishId(Long dishId); &ndash;&gt;-->
+<!--    <select id="getDishFlavorByDishId" resultType="DishFlavor">-->
+<!--        select name, value-->
+<!--        from dish_flavor-->
+<!--        where dish_id = #{dishId};-->
+<!--    </select>-->
+
 </mapper>

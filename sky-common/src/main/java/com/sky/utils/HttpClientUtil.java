@@ -33,7 +33,7 @@ public class HttpClientUtil {
      * @param paramMap
      * @return
      */
-    public static String doGet(String url,Map<String,String> paramMap){
+    public static String doGet(String url, Map<String, String> paramMap){
         // 创建Httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -74,7 +74,7 @@ public class HttpClientUtil {
     }
 
     /**
-     * 发送POST方式请求
+     * 以表单方式发送POST方式请求
      * @param url
      * @param paramMap
      * @return
@@ -112,6 +112,7 @@ public class HttpClientUtil {
         } finally {
             try {
                 response.close();
+                httpClient.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -121,7 +122,7 @@ public class HttpClientUtil {
     }
 
     /**
-     * 发送POST方式请求
+     * 以 Json 格式发送POST方式请求
      * @param url
      * @param paramMap
      * @return
@@ -136,12 +137,11 @@ public class HttpClientUtil {
         try {
             // 创建Http Post请求
             HttpPost httpPost = new HttpPost(url);
-
             if (paramMap != null) {
                 //构造json格式数据
                 JSONObject jsonObject = new JSONObject();
                 for (Map.Entry<String, String> param : paramMap.entrySet()) {
-                    jsonObject.put(param.getKey(),param.getValue());
+                    jsonObject.put(param.getKey(), param.getValue());
                 }
                 StringEntity entity = new StringEntity(jsonObject.toString(),"utf-8");
                 //设置请求编码
@@ -161,6 +161,7 @@ public class HttpClientUtil {
             throw e;
         } finally {
             try {
+                httpClient.close();
                 response.close();
             } catch (IOException e) {
                 e.printStackTrace();
