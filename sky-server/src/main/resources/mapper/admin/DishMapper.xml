@@ -3,12 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.sky.mapper.DishMapper">
+<mapper namespace="com.sky.mapper.admin.DishMapper">
 
     <resultMap id="selectByIdResultMap" type="com.sky.vo.DishVO">
         <id property="id" column="id"/>
         <collection property="flavors"
-                    select="com.sky.mapper.DishFlavorMapper.selectByDishId"
+                    select="com.sky.mapper.admin.DishFlavorMapper.selectByDishId"
                     column="id"/>
     </resultMap>
 

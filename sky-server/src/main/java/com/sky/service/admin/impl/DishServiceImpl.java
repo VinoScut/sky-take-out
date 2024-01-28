@@ -1,16 +1,16 @@
-package com.sky.service.impl;
+package com.sky.service.admin.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
-import com.sky.mapper.CategoryMapper;
-import com.sky.mapper.DishFlavorMapper;
-import com.sky.mapper.DishMapper;
-import com.sky.mapper.SetMealDishMapper;
+import com.sky.mapper.admin.CategoryMapper;
+import com.sky.mapper.admin.DishFlavorMapper;
+import com.sky.mapper.admin.DishMapper;
+import com.sky.mapper.admin.SetMealDishMapper;
 import com.sky.result.PageResult;
-import com.sky.service.DishService;
+import com.sky.service.admin.DishService;
 import com.sky.vo.DishVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

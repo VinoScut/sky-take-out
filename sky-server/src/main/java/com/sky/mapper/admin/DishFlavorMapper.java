@@ -1,4 +1,4 @@
-package com.sky.mapper;
+package com.sky.mapper.admin;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sky.entity.DishFlavor;
