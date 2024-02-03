@@ -6,6 +6,8 @@ import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.vo.DishVO;
 
+import java.util.List;
+
 
 public interface DishService {
 
@@ -20,4 +22,6 @@ public interface DishService {
     void enableOrDisable(Long id, Integer status);
 
     void edit(DishDTO dishDTO);
+
+    List<Dish> selectDishByCategoryId(Long categoryId);
 }

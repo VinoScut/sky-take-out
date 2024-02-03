@@ -4,6 +4,7 @@ import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.admin.DishService;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Api(tags = "菜品相关接口")
@@ -117,6 +119,14 @@ public class DishController {
         dishService.enableOrDisable(id, status);
         return Result.success();
     }
+
+    @GetMapping("/list")
+    @ApiOperation("根据分类id查询菜品")
+    public Result<List<Dish>> selectDishByCategoryId(Long categoryId) {
+        List<Dish> dishList = dishService.selectDishByCategoryId(categoryId);
+        return Result.success(dishList);
+    }
+
 
     /**
      * 根据 pattern 删除 redis 缓存，保持数据一致性

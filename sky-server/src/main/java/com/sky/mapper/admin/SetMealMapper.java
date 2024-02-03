@@ -2,12 +2,17 @@ package com.sky.mapper.admin;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sky.entity.Setmeal;
+import com.sky.vo.SetmealVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+@Repository("adminSetmealMapper")
 public interface SetMealMapper extends BaseMapper<Setmeal> {
 
     List<Setmeal> selectByCategoryId(Long categoryId);
+
+    SetmealVO getSetmealById(Long id);
+
+    void batchDelete(String ids);
 }

@@ -16,4 +16,28 @@
         where category_id = #{categoryId};
     </select>
 
+
+    <resultMap id="getSetmealByIdMap" type="com.sky.vo.SetmealVO">
+        <id column="id" property="id"/>
+        <collection property="setmealDishes"
+                    ofType="SetmealDish"
+                    select="com.sky.mapper.admin.SetMealDishMapper.selectBySetmealId"
+                    column="id"/>
+    </resultMap>
+
+    <!-- SetmealVO getSetmealById(Long id); -->
+    <select id="getSetmealById" resultMap="getSetmealByIdMap">
+        select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name category_name
+        from setmeal s left join category c
+        on s.category_id = c.id
+        where s.id = #{id}
+    </select>
+
+    <!-- void batchDelete(String ids); -->
+    <delete id="batchDelete">
+        delete
+        from setmeal
+        where id in (${ids})
+    </delete>
+
 </mapper>
