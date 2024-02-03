@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sky.mapper.user.DishMapper">
+
+    <resultMap id="selectDishMap" type="com.sky.vo.DishVO">
+        <id column="id" property="id"/>
+        <collection property="flavors"
+                    ofType="DishFlavor"
+                    select="com.sky.mapper.admin.DishFlavorMapper.selectByDishId"
+                    column="id" />
+    </resultMap>
+
+    <select id="getDishByCategoryId" resultMap="selectDishMap">
+        select id, name, price, image, status, update_time, category_id, description
+        from dish
+        where category_id = #{categoryId} and status = 1;
+    </select>
+
+</mapper>

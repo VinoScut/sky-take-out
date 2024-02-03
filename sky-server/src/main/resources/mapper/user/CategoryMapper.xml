@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sky.mapper.user.CategoryMapper">
+
+    <sql id="allColumn">
+        id, type, name, sort, status, create_time, create_user, update_time, update_user
+    </sql>
+
+    <!-- List<Category> getCategory(Integer type); -->
+    <select id="getCategory" resultType="Category">
+        select <include refid="allColumn"/>
+        from category
+        <where>
+            <if test="type != null">type = #{type}</if>
+        </where>
+    </select>
+
+</mapper>
