@@ -1,10 +1,8 @@
 package com.sky.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.sky.dto.ShoppingCartDTO;
 import com.sky.entity.ShoppingCart;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +19,6 @@ public interface ShoppingCartMapper extends BaseMapper<ShoppingCart> {
      * @return 查询结果集
      */
     List<ShoppingCart> list(ShoppingCart shoppingCart);
+
+    void batchInsert(List<ShoppingCart> shoppingCartList);
 }

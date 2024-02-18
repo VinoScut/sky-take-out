@@ -123,10 +123,10 @@ public class HttpClientUtil {
 
     /**
      * 以 Json 格式发送POST方式请求
-     * @param url
-     * @param paramMap
-     * @return
-     * @throws IOException
+     * @param url 访问地址
+     * @param paramMap 请求体中的 json 键值对
+     * @return 响应
+     * @throws IOException IO异常
      */
     public static String doPost4Json(String url, Map<String, String> paramMap) throws IOException {
         // 创建Httpclient对象

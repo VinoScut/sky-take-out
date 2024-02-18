@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sky.mapper.user.OrderMapper">
+
+    <!-- void paymentSuccess(String orderNumber, Orders orders); -->
+    <update id="paymentSuccess">
+        update orders
+        set checkout_time = #{orders.checkoutTime}, status = #{orders.status}, pay_status = #{orders.payStatus}
+        where number = #{orderNumber}
+    </update>
+
+    <resultMap id="orderVOMap" type="com.sky.vo.OrderVO">
+        <id column="id" property="id"/>
+        <collection property="orderDetailList"
+                    ofType="orderDetail"
+                    select="com.sky.mapper.user.OrderDetailMapper.listByOrderId"
+                    column="id"/>
+    </resultMap>
+
+    <!-- Page<OrderVO> page(Page<OrderVO> orderVOPage, OrdersPageQueryDTO ordersPageQueryDTO, Long userId); -->
+    <select id="page" resultMap="orderVOMap">
+        select *
+        from orders
+        where user_id = #{userId}
+        <if test="ordersPageQueryDTO.status != null">
+            and status = #{ordersPageQueryDTO.status}
+        </if>
+        order by order_time desc
+    </select>
+
+    <!-- OrderVO selectByOrderId(Long orderId); -->
+    <select id="selectByOrderId" resultMap="orderVOMap">
+        select *
+        from orders
+        where id = #{orderId}
+    </select>
+
+</mapper>
