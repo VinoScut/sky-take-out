@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("adminOrderController")
@@ -54,6 +55,7 @@ public class OrderController {
 
     @PutMapping("/cancel")
     @ApiOperation("取消订单")
+    @CacheEvict(cacheNames = "orderList", key = "'01'")
     public Result cancel(@RequestBody OrdersCancelDTO ordersCancelDTO) {
         orderService.cancel(ordersCancelDTO);
         return Result.success();

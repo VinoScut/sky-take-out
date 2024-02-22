@@ -12,6 +12,7 @@ import com.sky.vo.OrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("userOrderController")
@@ -28,6 +29,7 @@ public class OrderController {
 
     @PostMapping("/submit")
     @ApiOperation("用户下单")
+    @CacheEvict(cacheNames = "orderList", key = "'01'")
     public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO ordersSubmitDTO) {
         OrderSubmitVO orderSubmitVO = orderService.submit(ordersSubmitDTO);
         return Result.success(orderSubmitVO);
@@ -35,6 +37,7 @@ public class OrderController {
 
     @PutMapping("/payment")
     @ApiOperation("订单支付")
+    @CacheEvict(cacheNames = "orderList", key = "'01'")
     public Result payment(@RequestBody OrdersPaymentDTO ordersPaymentDTO) {
         //绕过微信支付，直接修改数据库中当前订单的状态，视为支付成功
         orderService.paymentSuccess(ordersPaymentDTO.getOrderNumber());
@@ -64,6 +67,7 @@ public class OrderController {
 
     @PutMapping("/cancel/{id}")
     @ApiOperation("取消订单")
+    @CacheEvict(cacheNames = "oderList", key = "'01'")
     public Result cancel(@PathVariable Long id) {
         orderService.cancel(id);
         return Result.success();
