@@ -2,10 +2,7 @@ package com.sky.service.admin.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sky.constant.MessageConstant;
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
+import com.sky.dto.*;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.exception.OrderBusinessException;
@@ -15,10 +12,15 @@ import com.sky.result.PageResult;
 import com.sky.service.admin.OrderService;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
+import com.sky.vo.TurnoverReportVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
         //先拿到当前的订单对象
         Orders orders = orderMapper.selectById(ordersRejectionDTO.getId());
         //商家只能拒绝待确认的订单
-        if(!orders.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+        if (!orders.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         //为用户退款
@@ -79,7 +81,8 @@ public class OrderServiceImpl implements OrderService {
         orders.setStatus(Orders.CANCELLED);
         //设置此对象的 cancelReason 属性，然后交由 mp 进行 update
         orders.setRejectionReason(ordersRejectionDTO.getRejectionReason());
-        orders.setCancelTime(LocalDateTime.now());;
+        orders.setCancelTime(LocalDateTime.now());
+        ;
         orderMapper.updateById(orders);
     }
 
@@ -88,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
         Long orderId = ordersConfirmDTO.getId();
         Orders orders = orderMapper.selectById(orderId);
         //校验订单状态：只有待确认的订单商家才能进行确认
-        if(orders == null || !orders.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+        if (orders == null || !orders.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         orders.setStatus(Orders.CONFIRMED);
@@ -99,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
     public void complete(Long id) {
         Orders orders = orderMapper.selectById(id);
         //校验订单状态：只有派送中的订单，商家执行完成操作
-        if(orders == null || !orders.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
+        if (orders == null || !orders.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         orders.setStatus(Orders.COMPLETED);
@@ -110,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
     public void delivery(Long id) {
         Orders orders = orderMapper.selectById(id);
         //校验订单状态：只有待派送的订单商家才能进行派送
-        if(orders == null || !orders.getStatus().equals(Orders.CONFIRMED)) {
+        if (orders == null || !orders.getStatus().equals(Orders.CONFIRMED)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         orders.setStatus(Orders.DELIVERY_IN_PROGRESS);

@@ -23,4 +23,7 @@ public interface DishMapper extends BaseMapper<Dish> {
     @Select("select status from dish where id = #{id}")
     Integer checkStatus(Long id);
 
+    @Select("select id, name, status from dish")
+    List<Dish> getDishList();
+
 }

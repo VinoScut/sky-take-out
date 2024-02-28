@@ -1,5 +1,6 @@
 package com.sky.service.user.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
@@ -17,13 +18,13 @@ import com.sky.result.PageResult;
 import com.sky.service.user.OrderService;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -42,13 +43,19 @@ public class OrderServiceImpl implements OrderService {
 
     OrderDetailMapper orderDetailMapper;
 
+    WebSocketServer webSocketServer;
+
     @Autowired
-    public OrderServiceImpl(OrderMapper orderMapper, UserMapper userMapper, AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper, OrderDetailMapper orderDetailMapper) {
+    public OrderServiceImpl(OrderMapper orderMapper, UserMapper userMapper, AddressBookMapper addressBookMapper,
+                            ShoppingCartMapper shoppingCartMapper, OrderDetailMapper orderDetailMapper,
+                            WebSocketServer webSocketServer)
+    {
         this.orderMapper = orderMapper;
         this.userMapper = userMapper;
         this.addressBookMapper = addressBookMapper;
         this.shoppingCartMapper = shoppingCartMapper;
         this.orderDetailMapper = orderDetailMapper;
+        this.webSocketServer = webSocketServer;
     }
 
     @Override
@@ -114,12 +121,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void paymentSuccess(String orderNumber) {
-        Orders orders = new Orders();
+        Orders orders = orderMapper.selectByOrderNumber(orderNumber);
         //设置当前订单的结账时间、状态、支付状态
         orders.setCheckoutTime(LocalDateTime.now());
         orders.setStatus(Orders.TO_BE_CONFIRMED);
         orders.setPayStatus(Orders.PAID);
-        orderMapper.paymentSuccess(orderNumber, orders);
+        orderMapper.updateById(orders);
+        //支付成功，借助 WebSocket 向“管理端网页”推送来单提醒
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", 1); // 1来单提醒  2客户催单
+        jsonObject.put("orderId", orders.getId());
+        jsonObject.put("content", "订单号：" + orderNumber);
+        webSocketServer.sendToAllClient(jsonObject.toJSONString());
     }
 
     @Override
@@ -178,5 +191,19 @@ public class OrderServiceImpl implements OrderService {
         orders.setStatus(Orders.CANCELLED);
         orders.setCancelReason("用户取消订单");
         orderMapper.updateById(orders);
+    }
+
+    @Override
+    public void reminder(Long id) {
+        //校验当前订单是否存在
+        Orders orders = orderMapper.selectById(id);
+        if (orders == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", 2); // 1来单提醒  2客户催单
+        jsonObject.put("orderId", id);
+        jsonObject.put("content", "订单号为：" + orders.getNumber());
+        webSocketServer.sendToAllClient(jsonObject.toJSONString());
     }
 }

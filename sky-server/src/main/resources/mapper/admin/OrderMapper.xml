@@ -30,4 +30,14 @@
 
     </select>
 
+    <!-- List<Orders> getOrdersBeforeByStatus(LocalDateTime beginTime, Integer status); -->
+    <select id="getOrdersBeforeByStatus" resultType="orders">
+        select id, number, order_time, status
+        from orders
+        where order_time &lt; #{beginTime}
+        <if test="status != null">
+            and status = #{status}
+        </if>
+    </select>
+
 </mapper>

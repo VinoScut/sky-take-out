@@ -26,7 +26,7 @@ public class OrderTask {
     /**
      * 每分钟检查一次超时未支付的订单，超过5分钟未支付的订单将被取消
      */
-    @Scheduled(cron = "0 * * * * ?")
+//    @Scheduled(cron = "0 * * * * ?")
     public void processTimeoutUnpaidOrders() {
         log.info("定时任务启动：检查超时未支付订单...");
         List<Orders> unpaidOrderList = orderMapper.getOrdersByStatus(Orders.PENDING_PAYMENT);

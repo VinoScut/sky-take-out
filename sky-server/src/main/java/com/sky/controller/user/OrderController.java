@@ -1,6 +1,5 @@
 package com.sky.controller.user;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
@@ -70,6 +69,13 @@ public class OrderController {
     @CacheEvict(cacheNames = "oderList", key = "'01'")
     public Result cancel(@PathVariable Long id) {
         orderService.cancel(id);
+        return Result.success();
+    }
+
+    @GetMapping("/reminder/{id}")
+    @ApiOperation("催单")
+    public Result reminder(@PathVariable Long id) {
+        orderService.reminder(id);
         return Result.success();
     }
 

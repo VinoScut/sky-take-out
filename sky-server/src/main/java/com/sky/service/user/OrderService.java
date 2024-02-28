@@ -21,4 +21,5 @@ public interface OrderService {
 
     void cancel(Long id);
 
+    void reminder(Long id);
 }
